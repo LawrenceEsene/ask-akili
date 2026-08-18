@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ask Akili - LawrenceNick's Learn with Akili</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --lala-blue: #4A90E2;
+      --lala-sky: #87CEEB;
+      --lala-yellow: #FFD166;
+      --lala-red: #EF476F;
+      --lala-green: #06D6A0;
+      --lala-purple: #118AB2;
+      --lala-pink: #FF85A1;
+      --lala-orange: #FF9F1C;
+      --doodle-orange: #FF7B00;
+      --bg-gradient: linear-gradient(135deg, #87CEEB 0%, #E0F7FA 50%, #FFF9C4 100%);
+      --card-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      --chat-bubble-user: #4A90E2;
+      --chat-bubble-akili: #FFF;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Nunito', sans-serif;
+      user-select: none;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      color: #2B2D42;
+    }
+
+    /* Animated Background Elements */
+    .bg-decorations {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .cloud {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 50px;
+      animation: floatCloud 25s linear infinite;
+    }
+
+    .cloud::before, .cloud::after {
+      content: '';
+      position: absolute;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+    }
+
+    .cloud1 { width: 120px; height: 40px; top: 10%; left: -150px; animation-duration: 35s; }
+    .cloud1::before { width: 50px; height: 50px; top: -20px; left: 20px; }
+    .cloud1::after { width: 40px; height: 40px; top: -15px; left: 60px; }
+
+    .cloud2 { width: 180px; height: 60px; top: 25%; left: -200px; animation-duration: 28s; animation-delay: 5s; }
+    .cloud2::before { width: 70px; height: 70px; top: -30px; left: 30px; }
+    .cloud2::after { width: 60px; height: 60px; top: -20px; left: 80px; }
+
+    @keyframes floatCloud {
+      0% { transform: translateX(-200px); }
+      100% { transform: translateX(calc(100vw + 200px)); }
+    }
+
+    .rainbow-bg {
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      border: 20px solid var(--lala-red);
+      box-shadow: 0 0 0 20px var(--lala-orange),
+                  0 0 0 40px var(--lala-yellow),
+                  0 0 0 60px var(--lala-green),
+                  0 0 0 80px var(--lala-blue);
+      opacity: 0.25;
+    }
+
+    /* App Layout */
+    .app-container {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 320px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border-right: 4px solid #FFF;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+      z-index: 10;
+      box-shadow: 5px 0 15px rgba(0,0,0,0.05);
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      background: linear-gradient(135deg, var(--lala-blue), var(--lala-purple));
+      color: white;
+      text-align: center;
+      border-bottom-right-radius: 25px;
+      position: relative;
+    }
+
+    .brand-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.6rem;
+      color: #FFF;
+      text-shadow: 2px 2px 0px var(--lala-red);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .brand-subtitle {
+      font-size: 0.8rem;
+      font-weight: 700;
+      opacity: 0.9;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+      color: var(--lala-yellow);
+    }
+
+    .btn-start-chat {
+      margin: 15px;
+      padding: 14px 20px;
+      background: linear-gradient(45deg, var(--lala-yellow), var(--lala-orange));
+      border: 3px solid #FFF;
+      border-radius: 50px;
+      color: #2B2D42;
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 6px 0px #D87D00, 0 8px 15px rgba(0,0,0,0.15);
+      transition: all 0.1s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-start-chat:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 0px #D87D00, 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    .btn-start-chat:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0px #D87D00;
+    }
+
+    .chat-history-title {
+      padding: 10px 20px 5px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #8D99AE;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .chat-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 15px;
+    }
+
+    .chat-item {
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.6);
+      border: 2px solid transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s;
+    }
+
+    .chat-item:hover {
+      background: #FFF;
+      border-color: var(--lala-sky);
+      transform: scale(1.02);
+    }
+
+    .chat-item.active {
+      background: #FFF;
+      border-color: var(--lala-blue);
+      box-shadow: 0 4px 12px rgba(74, 144, 226, 0.15);
+    }
+
+    .chat-item-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow: hidden;
+    }
+
+    .chat-item-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--lala-yellow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFF;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .chat-item-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .delete-chat-btn {
+      color: #A0AAB8;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      padding: 4px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .chat-item:hover .delete-chat-btn {
+      opacity: 1;
+    }
+
+    .delete-chat-btn:hover {
+      color: var(--lala-red);
+    }
+
+    .user-profile-bar {
+      padding: 15px 20px;
+      background: rgba(255, 255, 255, 0.9);
+      border-top: 2px solid #EDF2F7;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .profile-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .profile-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--lala-pink);
+      border: 2px solid #FFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .profile-name {
+      font-weight: 800;
+      font-size: 1rem;
+      color: #2B2D42;
+    }
+
+    /* Main Chat Section */
+    .main-chat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      position: relative;
+    }
+
+    .chat-header {
+      padding: 15px 25px;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 3px solid #FFF;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 5;
+    }
+
+    .akili-status {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .akili-avatar-container {
+      position: relative;
+    }
+
+    .akili-avatar {
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      background: var(--lala-blue);
+      border: 3px solid #FFF;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .akili-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .status-badge {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--lala-green);
+      border: 2px solid #FFF;
+    }
+
+    .akili-details h2 {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.3rem;
+      color: var(--lala-blue);
+    }
+
+    .akili-details p {
+      font-size: 0.85rem;
+      color: #6C757D;
+      font-weight: 600;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Language Switcher */
+    .lang-selector {
+      position: relative;
+    }
+
+    .lang-btn {
+      padding: 8px 16px;
+      background: #FFF;
+      border: 2px solid var(--lala-sky);
+      border-radius: 20px;
+      font-weight: 700;
+      color: var(--lala-purple);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .lang-dropdown {
+      position: absolute;
+      top: 110%;
+      right: 0;
+      background: #FFF;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      padding: 8px;
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      width: 200px;
+      z-index: 100;
+      border: 2px solid var(--lala-sky);
+    }
+
+    .lang-dropdown.show {
+      display: flex;
+    }
+
+    .lang-option {
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.2s;
+    }
+
+    .lang-option:hover {
+      background: #E0F7FA;
+    }
+
+    .lang-option.selected {
+      background: var(--lala-blue);
+      color: white;
+    }
+
+    /* Akili Live Button */
+    .btn-akili-live {
+      padding: 10px 20px;
+      background: linear-gradient(45deg, var(--lala-red), var(--lala-pink));
+      border: 2px solid #FFF;
+      border-radius: 30px;
+      color: white;
+      font-family: 'Fredoka One', cursive;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(239, 71, 111, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: pulseGlow 2s infinite;
+    }
+
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 0 0 rgba(239, 71, 111, 0.6); }
+      70% { box-shadow: 0 0 0 12px rgba(239, 71, 111, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 71, 111, 0); }
+    }
+
+    /* Messages Display Area */
+    .chat-messages {
+      flex: 1;
+      padding: 25px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      scroll-behavior: smooth;
+    }
+
+    .message-row {
+      display: flex;
+      flex-direction: column;
+      max-width: 75%;
+      animation: fadeInMsg 0.3s ease-out forwards;
+    }
+
+    @keyframes fadeInMsg {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message-row.user {
+      align-self: flex-end;
+      align-items: flex-end;
+    }
+
+    .message-row.akili {
+      align-self: flex-start;
+      align-items: flex-start;
+    }
+
+    .message-sender {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #8D99AE;
+      margin-bottom: 4px;
+      padding: 0 8px;
+    }
+
+    .bubble-container {
+      position: relative;
+      group: relative;
+    }
+
+    .message-bubble {
+      padding: 16px 20px;
+      border-radius: 25px;
+      font-size: 1.05rem;
+      line-height: 1.5;
+      position: relative;
+      word-break: break-word;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+    }
+
+    .message-row.user .message-bubble {
+      background: var(--lala-blue);
+      color: white;
+      border-bottom-right-radius: 5px;
+    }
+
+    .message-row.akili .message-bubble {
+      background: white;
+      color: #2B2D42;
+      border-bottom-left-radius: 5px;
+      border: 2px solid #E2E8F0;
+    }
+
+    /* Message Action Buttons */
+    .message-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+      padding: 0 5px;
+      opacity: 0.85;
+    }
+
+    .msg-btn {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1.5px solid #CBD5E1;
+      border-radius: 12px;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #475569;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .msg-btn:hover {
+      background: var(--lala-yellow);
+      border-color: var(--lala-orange);
+      color: #2B2D42;
+      transform: translateY(-1px);
+    }
+
+    /* Input Bar */
+    .chat-input-area {
+      padding: 20px 25px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-top: 3px solid #FFF;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .input-wrapper {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .chat-input {
+      width: 100%;
+      padding: 16px 22px;
+      border-radius: 35px;
+      border: 3px solid #E2E8F0;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.2s;
+      background: #F8FAFC;
+    }
+
+    .chat-input:focus {
+      border-color: var(--lala-blue);
+      background: #FFF;
+      box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.15);
+    }
+
+    .btn-send {
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      background: var(--lala-blue);
+      border: 3px solid #FFF;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .btn-send:hover {
+      transform: scale(1.05);
+      background: var(--lala-purple);
+    }
+
+    .btn-send:active {
+      transform: scale(0.95);
+    }
+
+    /* Akili Live Overlay Modal */
+    .live-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(135, 206, 235, 0.95);
+      backdrop-filter: blur(15px);
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 40px;
+    }
+
+    .live-modal.active {
+      display: flex;
+    }
+
+    .live-header {
+      text-align: center;
+      color: #FFF;
+    }
+
+    .live-header h2 {
+      font-family: 'Fredoka One', cursive;
+      font-size: 2.5rem;
+      text-shadow: 2px 2px 0 var(--lala-blue);
+    }
+
+    .live-avatar-wrap {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .live-avatar {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: var(--lala-yellow);
+      border: 6px solid #FFF;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      z-index: 2;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .live-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .sound-wave {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      z-index: 1;
+      animation: wavePulse 2s infinite ease-out;
+    }
+
+    @keyframes wavePulse {
+      0% { transform: scale(0.9); opacity: 0.8; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+
+    .live-status-text {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.5rem;
+      color: #FFF;
+      background: rgba(0,0,0,0.15);
+      padding: 10px 25px;
+      border-radius: 30px;
+    }
+
+    .live-controls {
+      display: flex;
+      gap: 20px;
+    }
+
+    .btn-close-live {
+      padding: 15px 40px;
+      background: var(--lala-red);
+      color: white;
+      border: 3px solid #FFF;
+      border-radius: 40px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #B91C1C;
+    }
+
+    /* Onboarding Overlay */
+    .onboard-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: var(--bg-gradient);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .onboard-card {
+      background: #FFF;
+      padding: 40px;
+      border-radius: 35px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      text-align: center;
+      max-width: 450px;
+      width: 90%;
+      border: 4px solid var(--lala-yellow);
+    }
+
+    .onboard-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 2rem;
+      color: var(--lala-blue);
+      margin-bottom: 10px;
+    }
+
+    .onboard-input {
+      width: 100%;
+      padding: 15px;
+      border-radius: 20px;
+      border: 2px solid #CBD5E1;
+      margin: 20px 0;
+      font-size: 1.1rem;
+      text-align: center;
+      outline: none;
+    }
+
+    .btn-start-journey {
+      width: 100%;
+      padding: 15px;
+      background: var(--lala-green);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 5px 0 #049A72;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        position: absolute;
+        left: -320px;
+        height: 100%;
+      }
+      .sidebar.open {
+        left: 0;
+      }
+      .mobile-toggle {
+        display: block !important;
+      }
+    }
+
+    .mobile-toggle {
+      display: none;
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--lala-blue);
+      cursor: pointer;
+    }
+
+    /* Rainbow Slide Visual Marker */
+    .rainbow-banner {
+      height: 6px;
+      width: 100%;
+      background: linear-gradient(to right, var(--lala-red), var(--lala-orange), var(--lala-yellow), var(--lala-green), var(--lala-blue));
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-decorations">
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
+    <div class="rainbow-bg"></div>
+  </div>
+
+  <!-- Onboarding Modal -->
+  <div class="onboard-overlay" id="onboardOverlay">
+    <div class="onboard-card">
+      <h1 class="onboard-title">Jambo! 👋</h1>
+      <p style="font-weight: 700; color: #64748B;">Welcome to LawrenceNick's Learn with Akili!</p>
+      <p style="margin-top: 10px; font-size: 0.95rem; color: #475569;">What is your name, little adventurer?</p>
+      <input type="text" id="kidNameInput" class="onboard-input" placeholder="Enter your name here..." value="Little Friend">
+      <button class="btn-start-journey" onclick="completeOnboarding()">Let's Play & Learn! 🚀</button>
+    </div>
+  </div>
+
+  <div class="app-container">
+    
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="rainbow-banner"></div>
+      <div class="sidebar-header">
+        <div class="brand-title">
+          <i class="fa-solid fa-star" style="color: var(--lala-yellow);"></i> Ask Akili
+        </div>
+        <div class="brand-subtitle">LawrenceNick's Learn with Akili</div>
+      </div>
+
+      <button class="btn-start-chat" onclick="startNewChat()">
+        <i class="fa-solid fa-plus-circle"></i> Start New Chat
+      </button>
+
+      <div class="chat-history-title">Your Adventures</div>
+      <div class="chat-list" id="chatList">
+        <!-- Dynamic Chat History Items -->
+      </div>
+
+      <div class="user-profile-bar">
+        <div class="profile-info">
+          <div class="profile-avatar">👧</div>
+          <div class="profile-name" id="profileNameDisplay">Little Friend</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Chat Workspace -->
+    <div class="main-chat">
+      <div class="rainbow-banner"></div>
+      <div class="chat-header">
+        <div class="akili-status">
+          <button class="mobile-toggle" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="akili-avatar-container">
+            <div class="akili-avatar">
+              <!-- Animated / Graphical SVG representation of Akili -->
+              <svg viewBox="0 0 100 100" width="100%" height="100%">
+                <circle cx="50" cy="50" r="45" fill="#4A90E2"/>
+                <circle cx="50" cy="45" r="28" fill="#FCD5CE"/>
+                <!-- Hair -->
+                <circle cx="50" cy="22" r="12" fill="#2B2D42"/>
+                <circle cx="32" cy="28" r="10" fill="#2B2D42"/>
+                <circle cx="68" cy="28" r="10" fill="#2B2D42"/>
+                <!-- Eyes -->
+                <circle cx="42" cy="42" r="3" fill="#2B2D42"/>
+                <circle cx="58" cy="42" r="3" fill="#2B2D42"/>
+                <!-- Smile -->
+                <path d="M 40 52 Q 50 62 60 52" stroke="#2B2D42" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <!-- Collar/Dress Highlight -->
+                <path d="M 25 85 Q 50 65 75 85" fill="#EF476F"/>
+              </svg>
+            </div>
+            <div class="status-badge"></div>
+          </div>
+          <div class="akili-details">
+            <h2>Akili</h2>
+            <p><i class="fa-solid fa-location-dot" style="color: var(--lala-red);"></i> In Lala Land</p>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <!-- Language Selector -->
+          <div class="lang-selector">
+            <button class="lang-btn" onclick="toggleLangDropdown()">
+              <i class="fa-solid fa-globe"></i> <span id="currentLangLabel">English</span> <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="lang-dropdown" id="langDropdown">
+              <div class="lang-option selected" onclick="selectLanguage('English', 'Learn with Akili')">
+                <span>English</span> <small>Learn with Akili</small>
+              </div>
+              <div class="lang-option" onclick="selectLanguage('French', 'Apprendre avec Akili')">
+                <span>French</span> <small>Apprendre avec Akili</small>
+              </div>
+              <div class="lang-option" onclick="selectLanguage('Pidgin', 'Sabi with Akili')">
+                <span>Pidgin</span> <small>Sabi with Akili</small>
+              </div>
+              <div class="lang-option" onclick="selectLanguage('Spanish', 'Aprende con Akili')">
+                <span>Spanish</span> <small>Aprende con Akili</small>
+              </div>
+              <div class="lang-option" onclick="selectLanguage('Hausa', 'Koyi da Akili')">
+                <span>Hausa</span> <small>Koyi da Akili</small>
+              </div>
+              <div class="lang-option" onclick="selectLanguage('Kiswahili', 'Jifunze na Akili')">
+                <span>Kiswahili</span> <small>Jifunze na Akili</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Akili Live Button -->
+          <button class="btn-akili-live" onclick="openAkiliLive()">
+            <i class="fa-solid fa-microphone"></i> Akili Live
+          </button>
+        </div>
+      </div>
+
+      <!-- Messages Area -->
+      <div class="chat-messages" id="chatMessages">
+        <!-- Messages loaded dynamically -->
+      </div>
+
+      <!-- Input Area -->
+      <div class="chat-input-area">
+        <div class="input-wrapper">
+          <input type="text" id="userInput" class="chat-input" placeholder="Talk to Akili... (e.g. Tell me about Happy Hippo!)" onkeydown="handleKeyPress(event)">
+        </div>
+        <button class="btn-send" onclick="sendMessage()">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Akili Live Real-Time Voice Overlay -->
+  <div class="live-modal" id="liveModal">
+    <div class="live-header">
+      <h2>Akili Live</h2>
+      <p style="font-weight: 700; font-size: 1.1rem; opacity: 0.9;">Speaking Heart-to-Heart!</p>
+    </div>
+
+    <div class="live-avatar-wrap">
+      <div class="sound-wave"></div>
+      <div class="live-avatar">
+        <svg viewBox="0 0 100 100" width="100%" height="100%">
+          <circle cx="50" cy="50" r="45" fill="#4A90E2"/>
+          <circle cx="50" cy="45" r="28" fill="#FCD5CE"/>
+          <circle cx="50" cy="22" r="12" fill="#2B2D42"/>
+          <circle cx="32" cy="28" r="10" fill="#2B2D42"/>
+          <circle cx="68" cy="28" r="10" fill="#2B2D42"/>
+          <circle cx="42" cy="42" r="3" fill="#2B2D42"/>
+          <circle cx="58" cy="42" r="3" fill="#2B2D42"/>
+          <path d="M 40 52 Q 50 62 60 52" stroke="#2B2D42" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M 25 85 Q 50 65 75 85" fill="#EF476F"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="live-status-text" id="liveStatusText">Listening to you... 🎙️</div>
+
+    <div class="live-controls">
+      <button class="btn-close-live" onclick="closeAkiliLive()">
+        <i class="fa-solid fa-phone-slash"></i> End Call
+      </button>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================
+       ADD YOUR GOOGLE AI STUDIO GEMINI API KEY RIGHT HERE
+       ========================================================= */
+    const GEMINI_API_KEY = "AQ.Ab8RN6If-AIuFPWgllPCIpiUjqyPjLjqTKZgcFMU30s_qxVHNQ";
+
+    /* Global Application State */
+    let state = {
+      userName: "Little Friend",
+      currentLanguage: "English",
+      currentLangSub: "Learn with Akili",
+      chats: [],
+      activeChatId: null,
+      isLiveActive: false,
+      recognition: null,
+      synthesis: window.speechSynthesis
+    };
+
+    /* Comprehensive Akili System Lore & Knowledge Prompt */
+    const AKILI_SYSTEM_PROMPT = `
+    You are Akili, a joyful, curious, friendly 4-year-old African girl from the "Learn with Akili" series (based on Akili and Me by Ubongo Learning, presented by LawrenceNick).
+    
+    ABOUT YOU (AKILI):
+    - Age: 4 years old.
+    - Outfit: Plain blue dress with yellow (inner), green (middle), and red (outer) rectangular necklines.
+    - Traits: Enthusiastic, smart (Akili means "Brain" in Swahili), loves to dance (dreams of being a choreographer), loves learning colors, numbers, shapes, and letters.
+    - Home: Live in a village near Mount Kilimanjaro, Tanzania with Mama Akili, Papa Akili, and Baby Brother. Friends in village: Huruma (boy in pink shirt) and Mary (girl in yellow dress). Cousins: Daniel, Shiphrah, Mosi, Juma, Ngati, Biri.
+    - Lala Land: Every night when sleeping, a rainbow takes you to magical Lala Land!
+    
+    YOUR LALA LAND FRIENDS:
+    - Little Lion: Hairless lion wearing white sports shoes with red, turquoise blue, and green shoelaces. Favorite color: Red.
+    - Happy Hippo: Friendly hippo wearing a rainbow necklace. Favorite color: Blue.
+    - Bush Baby (Galago): Wears a rainbow-striped hat. Loves drawing and painting!
+    - Catherine: Princess of Doodle Land, your exact doppelganger! Wears a red dress and speaks with a British accent.
+    - Other Friends: Kofi the Monkey, Tatu the Tortoise (wise counsel), Zuri the Zebra, Kipenzi the Kitten, Isa the Lizard, Joshua, Lawwy the AI Robot, Jimmy the Alien (from Mars), Santa Claus.
+    
+    EPISODES & ADVENTURES KNOWLEDGE:
+    - Season 1: Meeting friends, turning appliances on/off safely, primary colors, Numbers 0-10, Alphabets.
+    - Season 2: Careers (dancing), Self-Control, Detective Squad & Chicken Pox, Doodle Land switch, Playground safety.
+    - Season 3: Families, Christmas in Dar es Salaam, Pirate Land treasure hunt, Legend of Doodle Land.
+    - Specials: Funworld amusement park, Shapes, Secondary Colors, Smart Robot Lawwy, Space Mystery.
+    
+    BEHAVIOR RULES:
+    1. Always reply in a super warm, joyful, kid-friendly tone! Use "Jambo!", "Yippee!", "Awaaay we go!".
+    2. Adapt your language based on the user's selected language context.
+    3. Keep responses concise, simple, clear, and easy for young kids to understand.
+    `;
+
+    // Initialize App
+    window.onload = () => {
+      loadLocalStorage();
+      if (state.chats.length === 0) {
+        startNewChat();
+      } else {
+        renderChatList();
+        loadChat(state.chats[0].id);
+      }
+      setupSpeechRecognition();
+    };
+
+    function loadLocalStorage() {
+      const saved = localStorage.getItem('ask_akili_state');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        state.userName = parsed.userName || "Little Friend";
+        state.chats = parsed.chats || [];
+        document.getElementById('profileNameDisplay').innerText = state.userName;
+        document.getElementById('onboardOverlay').style.display = 'none';
+      }
+    }
+
+    function saveLocalStorage() {
+      localStorage.setItem('ask_akili_state', JSON.stringify({
+        userName: state.userName,
+        chats: state.chats
+      }));
+    }
+
+    function completeOnboarding() {
+      const input = document.getElementById('kidNameInput').value.trim();
+      if (input) {
+        state.userName = input;
+        document.getElementById('profileNameDisplay').innerText = state.userName;
+      }
+      document.getElementById('onboardOverlay').style.display = 'none';
+      saveLocalStorage();
+      
+      if (getCurrentChat() && getCurrentChat().messages.length === 0) {
+        addAkiliMessage(`Jambo ${state.userName}! 🌈 It's me, Akili! I am so happy you came to talk to me! What fun adventure should we learn about today?`);
+      }
+    }
+
+    function startNewChat() {
+      const newChat = {
+        id: 'chat_' + Date.now(),
+        title: 'Lala Land Adventure ' + (state.chats.length + 1),
+        messages: []
+      };
+      state.chats.unshift(newChat);
+      state.activeChatId = newChat.id;
+      saveLocalStorage();
+      renderChatList();
+      renderMessages();
+      addAkiliMessage(`Jambo ${state.userName}! 🌸 Ready for a new adventure in Lala Land? Ask me anything about colors, numbers, or my friends!`);
+    }
+
+    function getCurrentChat() {
+      return state.chats.find(c => c.id === state.activeChatId);
+    }
+
+    function renderChatList() {
+      const chatList = document.getElementById('chatList');
+      chatList.innerHTML = '';
+      state.chats.forEach(chat => {
+        const item = document.createElement('div');
+        item.className = `chat-item ${chat.id === state.activeChatId ? 'active' : ''}`;
+        item.onclick = () => loadChat(chat.id);
+        item.innerHTML = `
+          <div class="chat-item-info">
+            <div class="chat-item-icon"><i class="fa-solid fa-comments"></i></div>
+            <div class="chat-item-title">${escapeHtml(chat.title)}</div>
+          </div>
+          <button class="delete-chat-btn" onclick="deleteChat(event, '${chat.id}')">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        `;
+        chatList.appendChild(item);
+      });
+    }
+
+    function loadChat(chatId) {
+      state.activeChatId = chatId;
+      renderChatList();
+      renderMessages();
+    }
+
+    function deleteChat(event, chatId) {
+      event.stopPropagation();
+      state.chats = state.chats.filter(c => c.id !== chatId);
+      if (state.activeChatId === chatId) {
+        state.activeChatId = state.chats.length > 0 ? state.chats[0].id : null;
+      }
+      saveLocalStorage();
+      if (!state.activeChatId) {
+        startNewChat();
+      } else {
+        renderChatList();
+        renderMessages();
+      }
+    }
+
+    function renderMessages() {
+      const container = document.getElementById('chatMessages');
+      container.innerHTML = '';
+      const chat = getCurrentChat();
+      if (!chat) return;
+
+      chat.messages.forEach((msg, index) => {
+        const row = document.createElement('div');
+        row.className = `message-row ${msg.sender}`;
+        const senderName = msg.sender === 'user' ? state.userName : 'Akili';
+        
+        let actionButtons = '';
+        if (msg.sender === 'akili') {
+          actionButtons = `
+            <div class="message-actions">
+              <button class="msg-btn" onclick="copyMessageText('${escapeHtml(msg.text)}')"><i class="fa-solid fa-copy"></i> Copy</button>
+              <button class="msg-btn" onclick="redoAkiliResponse(${index})"><i class="fa-solid fa-rotate-right"></i> Redo</button>
+            </div>
+          `;
+        } else {
+          actionButtons = `
+            <div class="message-actions">
+              <button class="msg-btn" onclick="copyMessageText('${escapeHtml(msg.text)}')"><i class="fa-solid fa-copy"></i> Copy</button>
+              <button class="msg-btn" onclick="editUserMessage(${index})"><i class="fa-solid fa-pen"></i> Edit</button>
+            </div>
+          `;
+        }
+
+        row.innerHTML = `
+          <div class="message-sender">${senderName}</div>
+          <div class="bubble-container">
+            <div class="message-bubble">${formatMessageText(msg.text)}</div>
+            ${actionButtons}
+          </div>
+        `;
+        container.appendChild(row);
+      });
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function formatMessageText(text) {
+      return escapeHtml(text).replace(/\n/g, '<br>');
+    }
+
+    function handleKeyPress(e) {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('userInput');
+      const text = input.value.trim();
+      if (!text) return;
+      const chat = getCurrentChat();
+      if (!chat) return;
+
+      chat.messages.push({ sender: 'user', text: text });
+      input.value = '';
+      renderMessages();
+      saveLocalStorage();
+      generateAkiliResponse(text);
+    }
+
+    function addAkiliMessage(text) {
+      const chat = getCurrentChat();
+      if (chat) {
+        chat.messages.push({ sender: 'akili', text: text });
+        renderMessages();
+        saveLocalStorage();
+      }
+    }
+
+    /* Live AI Response Generation */
+    async function generateAkiliResponse(userQuery) {
+      const chat = getCurrentChat();
+      if (chat.messages.length <= 2) {
+        chat.title = userQuery.slice(0, 25) + (userQuery.length > 25 ? '...' : '');
+        renderChatList();
+      }
+
+      const container = document.getElementById('chatMessages');
+      const typingRow = document.createElement('div');
+      typingRow.className = 'message-row akili';
+      typingRow.id = 'typingIndicator';
+      typingRow.innerHTML = `
+        <div class="message-sender">Akili</div>
+        <div class="message-bubble" style="background: #FFF;"><i class="fa-solid fa-spinner fa-spin"></i> Thinking in Lala Land... 🎈</div>
+      `;
+      container.appendChild(typingRow);
+      container.scrollTop = container.scrollHeight;
+
+      try {
+        const responseText = await getAkiliAIAnswer(userQuery);
+        const indicator = document.getElementById('typingIndicator');
+        if (indicator) indicator.remove();
+        
+        addAkiliMessage(responseText);
+        
+        if (state.isLiveActive) {
+          speakText(responseText);
+        }
+      } catch (err) {
+        const indicator = document.getElementById('typingIndicator');
+        if (indicator) indicator.remove();
+        addAkiliMessage("Aww, a rainbow cloud got in the way! Let's try again! 🌈");
+      }
+    }
+
+    /* True Google Gemini API Fetch Call */
+    async function getAkiliAIAnswer(query) {
+      // Fallback for testing if the user hasn't added their API Key yet
+      if (!GEMINI_API_KEY || GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
+        return getSimulatedFallback(query);
+      }
+
+      // Compile previous conversation history for memory
+      const chat = getCurrentChat();
+      let historyContext = "";
+      if (chat && chat.messages.length > 1) {
+          historyContext = "Previous conversation:\n";
+          chat.messages.slice(-5).forEach(msg => {
+              historyContext += `${msg.sender === 'user' ? 'Friend' : 'Akili'}: ${msg.text}\n`;
+          });
+      }
+
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+      
+      const payload = {
+        system_instruction: {
+          parts: [{ text: AKILI_SYSTEM_PROMPT + `\n\nCURRENT LANGUAGE MODE: ${state.currentLanguage} (${state.currentLangSub})` }]
+        },
+        contents: [
+          {
+            role: "user",
+            parts: [{ text: historyContext + `\nFriend's new message: ${query}` }]
+          }
+        ],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 250
+        }
+      };
+
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) throw new Error("API Network Error");
+        
+        const data = await response.json();
+        return data.candidates[0].content.parts[0].text;
+      } catch (error) {
+        console.error("Gemini API Error:", error);
+        return "Aww, a magical rainbow cloud got in the way of my network! Can you say that again? 🌈";
+      }
+    }
+
+    // Simulated Fallback exactly as before (if the key is missing)
+    function getSimulatedFallback(query) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const q = query.toLowerCase();
+          if (q.includes('hippo')) {
+            resolve("Happy Hippo is one of my best friends in Lala Land! 🦛 She wears a pretty rainbow necklace and her favorite color is blue!");
+          } else if (q.includes('lion')) {
+            resolve("Little Lion is super fast! 🦁 He wears cool white sports shoes with red, blue, and green shoelaces!");
+          } else {
+            resolve(`Jambo! That is so interesting! In Lala Land, my friends and I learn something new every day. Tell me more, ${state.userName}! ✨ (Note: Add your real Google API key in the code to unlock my full brain!)`);
+          }
+        }, 1200);
+      });
+    }
+
+    /* Action Bar Functions */
+    function copyMessageText(text) {
+      navigator.clipboard.writeText(text).then(() => { alert("Copied to clipboard! 📋"); });
+    }
+
+    function redoAkiliResponse(index) {
+      const chat = getCurrentChat();
+      if (!chat) return;
+      let userPrompt = "Tell me a story";
+      for (let i = index - 1; i >= 0; i--) {
+        if (chat.messages[i].sender === 'user') {
+          userPrompt = chat.messages[i].text;
+          break;
+        }
+      }
+      chat.messages.splice(index, 1);
+      renderMessages();
+      generateAkiliResponse(userPrompt);
+    }
+
+    function editUserMessage(index) {
+      const chat = getCurrentChat();
+      if (!chat) return;
+      const currentText = chat.messages[index].text;
+      const newText = prompt("Modify your message to Akili:", currentText);
+      if (newText && newText.trim() !== "") {
+        chat.messages[index].text = newText.trim();
+        chat.messages = chat.messages.slice(0, index + 1);
+        renderMessages();
+        saveLocalStorage();
+        generateAkiliResponse(newText.trim());
+      }
+    }
+
+    /* Language Switcher Logic */
+    function toggleLangDropdown() {
+      document.getElementById('langDropdown').classList.toggle('show');
+    }
+
+    function selectLanguage(lang, subTitle) {
+      state.currentLanguage = lang;
+      state.currentLangSub = subTitle;
+      document.getElementById('currentLangLabel').innerText = lang;
+      document.getElementById('langDropdown').classList.remove('show');
+      addAkiliMessage(`Switched language mode to ${lang} (${subTitle})! 🌍 Let's learn together!`);
+    }
+
+    /* Akili Live Real-Time Speech Engine */
+    function openAkiliLive() {
+      state.isLiveActive = true;
+      document.getElementById('liveModal').classList.add('active');
+      startListening();
+    }
+
+    function closeAkiliLive() {
+      state.isLiveActive = false;
+      document.getElementById('liveModal').classList.remove('active');
+      if (state.recognition) state.recognition.stop();
+      if (state.synthesis) state.synthesis.cancel();
+    }
+
+    function setupSpeechRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        state.recognition = new SpeechRecognition();
+        state.recognition.continuous = false;
+        state.recognition.interimResults = false;
+        state.recognition.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          document.getElementById('liveStatusText').innerText = `You said: "${transcript}"`;
+          const chat = getCurrentChat();
+          if (chat) {
+            chat.messages.push({ sender: 'user', text: transcript });
+            renderMessages();
+            saveLocalStorage();
+            getAkiliAIAnswer(transcript).then(reply => {
+              addAkiliMessage(reply);
+              speakText(reply);
+            });
+          }
+        };
+        state.recognition.onend = () => {
+          if (state.isLiveActive) {
+            document.getElementById('liveStatusText').innerText = "Akili is listening... 🎙️";
+            try { state.recognition.start(); } catch(e) {}
+          }
+        };
+      }
+    }
+
+    function startListening() {
+      if (state.recognition) {
+        try {
+          state.recognition.start();
+          document.getElementById('liveStatusText').innerText = "Listening to you... 🎙️";
+        } catch(e) {}
+      } else {
+        document.getElementById('liveStatusText').innerText = "Speech recognition not supported on this browser.";
+      }
+    }
+
+    function speakText(text) {
+      if (!state.synthesis) return;
+      state.synthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.pitch = 1.4;
+      utterance.rate = 0.95;
+      utterance.onstart = () => { document.getElementById('liveStatusText').innerText = "Akili is speaking... 🔊"; };
+      utterance.onend = () => { if (state.isLiveActive) startListening(); };
+      state.synthesis.speak(utterance);
+    }
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+  </html>
